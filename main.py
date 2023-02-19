@@ -74,6 +74,12 @@ def get_moderation(question):
     return None
 
 def makeFilename():
+    """
+    Gets the current date/time and makes a filename from it
+
+    Returns a string for the filename where the chat is to be saved
+    """
+    
     current_time = datetime.datetime.now()
     name_list = [ '../saved_chats/chat', str(current_time.year), str(current_time.month), 
         str(current_time.day), str(current_time.hour), str(current_time.minute), 
