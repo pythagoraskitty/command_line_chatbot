@@ -1,0 +1,13 @@
+#!/bin/zsh
+
+# Don't forget to change the following to the actual project directory.
+cd <<YOUR OUTER PROJECT DIRECTORY HERE>>/command_line_chatbot;
+
+mkdir -p ../saved_chats;
+. ./venv/bin/activate;
+echo "opening chat";
+python3 main.py;
+echo "closing chat";
+deactivate;
+
+# Don't forget to give this file executable permission and put it where your PATH can find it.
