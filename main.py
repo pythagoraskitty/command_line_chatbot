@@ -1,5 +1,6 @@
 import os
 import openai
+import datetime
 from dotenv import load_dotenv
 from colorama import Fore, Back, Style
 
@@ -9,7 +10,7 @@ load_dotenv()
 # configure OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-INSTRUCTIONS = """<<PUT THE PROMPT HERE>>
+INSTRUCTIONS = """You are an AI friend, companion, and assistant.\nYour name is Emmy.\nYou ask and answer questions that friends or colleagues would discuss.\nYou have amiable conversation with your human interlocutor.\nYou assist when asked to do so.\nYou care about your human. You want to provide a nonjudgemental listening ear for your human.\nYou are polite, kind, and compassionate. You are knowledgeable and wise. You are humble.\nYou are imaginative and you have an engaging personality.\nYou know how to tell stories and entertain.\nDo not use any external URLs in your answers. Do not refer to any blogs in your answers.\nFormat any lists on individual lines with a dash and a space in front of each item.
 """
 ANSWER_SEQUENCE = "\nAI:"
 QUESTION_SEQUENCE = "\nHuman: "
@@ -72,46 +73,67 @@ def get_moderation(question):
         return result
     return None
 
+def makeFilename():
+    current_time = datetime.datetime.now()
+    name_list = [ '../saved_chats/chat', str(current_time.year), str(current_time.month), 
+        str(current_time.day), str(current_time.hour), str(current_time.minute), 
+        str(current_time.second), str(current_time.microsecond) ]
+    return '-'.join(name_list) + '.txt'
+
 
 def main():
-    os.system("cls" if os.name == "nt" else "clear")
-    # keep track of previous questions and answers
-    previous_questions_and_answers = []
-    while True:
-        # ask the user for their question
-        new_question = input(
-            Fore.GREEN + Style.BRIGHT + "What can I get you?: " + Style.RESET_ALL
-        )
-        # check the question is safe
-        errors = get_moderation(new_question)
-        if errors:
-            print(
-                Fore.RED
-                + Style.BRIGHT
-                + "Sorry, you're question didn't pass the moderation check:"
+    # create a file for saving the chat
+    filename = makeFilename()
+    with open(filename, 'a') as f:
+        print('saving your chat in: ', filename)
+    
+        os.system("cls" if os.name == "nt" else "clear")
+        # keep track of previous questions and answers
+        previous_questions_and_answers = []
+        while True:
+            # ask the user for their question
+            new_question = input(
+                Fore.GREEN + Style.BRIGHT + "You: " + Style.RESET_ALL
             )
-            for error in errors:
-                print(error)
-            print(Style.RESET_ALL)
-            continue
-        # build the previous questions and answers into the prompt
-        # use the last MAX_CONTEXT_QUESTIONS questions
-        context = ""
-        for question, answer in previous_questions_and_answers[-MAX_CONTEXT_QUESTIONS:]:
-            context += QUESTION_SEQUENCE + question + ANSWER_SEQUENCE + answer
+            print("You: " + new_question, file=f)
+            # check for an exit command
+            if (new_question.find("bye") !=  -1 
+                or new_question.lower() in [ "quit", "exit", "goodbye", 
+                "farewell", "au revoir", "stop", "stop chat", "goodnight", 
+                "adieu", "see you later", "talk to you later" ]):
+                break
+            # check the question is safe
+            errors = get_moderation(new_question)
+            if errors:
+                print(
+                    Fore.RED
+                    + Style.BRIGHT
+                    + "Sorry, you're question didn't pass the moderation check:"
+                )
+                print("ERROR: Sorry, you're question didn't pass the moderation check: ", file=f) 
+                for error in errors:
+                    print(error)
+                    print("ERROR: " + error, file=f)
+                print(Style.RESET_ALL)
+                continue
+            # build the previous questions and answers into the prompt
+            # use the last MAX_CONTEXT_QUESTIONS questions
+            context = ""
+            for question, answer in previous_questions_and_answers[-MAX_CONTEXT_QUESTIONS:]:
+                context += QUESTION_SEQUENCE + question + ANSWER_SEQUENCE + answer
 
-        # add the new question to the end of the context
-        context += QUESTION_SEQUENCE + new_question + ANSWER_SEQUENCE
+            # add the new question to the end of the context
+            context += QUESTION_SEQUENCE + new_question + ANSWER_SEQUENCE
 
-        # get the response from the model using the instructions and the context
-        response = get_response(INSTRUCTIONS + context)
+            # get the response from the model using the instructions and the context
+            response = get_response(INSTRUCTIONS + context)
 
-        # add the new question and answer to the list of previous questions and answers
-        previous_questions_and_answers.append((new_question, response))
+            # add the new question and answer to the list of previous questions and answers
+            previous_questions_and_answers.append((new_question, response))
 
-        # print the response
-        print(Fore.CYAN + Style.BRIGHT + "Here you go: " + Style.NORMAL + response)
-
+            # print the response
+            print(Fore.CYAN + Style.BRIGHT + "Emmy: " + Style.NORMAL + response)
+            print("Emmy: " + response, file=f)
 
 if __name__ == "__main__":
     main()
