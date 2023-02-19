@@ -14,10 +14,10 @@ INSTRUCTIONS = """You are an AI friend, companion, and assistant.\nYour name is 
 """
 ANSWER_SEQUENCE = "\nAI:"
 QUESTION_SEQUENCE = "\nHuman: "
-TEMPERATURE = 0.5
+TEMPERATURE = 0.9
 MAX_TOKENS = 500
-FREQUENCY_PENALTY = 0
-PRESENCE_PENALTY = 0.6
+FREQUENCY_PENALTY = 0.6
+PRESENCE_PENALTY = 0.7
 # limits how many questions we include in the prompt
 MAX_CONTEXT_QUESTIONS = 10
 
