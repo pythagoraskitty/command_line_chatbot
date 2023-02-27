@@ -1,5 +1,9 @@
 # Command Line Chat Bot
 
+The README below is currently copied directly from [atomic14/command_line_chatbot](https://github.com/atomic14/command_line_chatbot) and so needs to be updated for this repo...
+
+---
+
 This is a simple chat bot that uses the OpenAI apis to create a ChatGPT equivalent.
 
 You can watch a great video walkthrough [here](https://youtu.be/jQFhtFMDz1s).
