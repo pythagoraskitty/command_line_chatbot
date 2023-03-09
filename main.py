@@ -81,6 +81,7 @@ def get_moderation(question):
     return None
 
 def get_date_string():
+    current_time = datetime.datetime.now()
     string_list = [ str(current_time.year), pad_num_str(current_time.month), 
         pad_num_str(current_time.day), pad_num_str(current_time.hour), pad_num_str(current_time.minute), 
         pad_num_str(current_time.second), pad_num_str(current_time.microsecond, digits=3) ]
@@ -95,8 +96,6 @@ def make_filename(prefix):
 
     Returns a string for the filename where the chat is to be saved
     """
-
-    current_time = datetime.datetime.now()
     name_list = [ prefix, get_date_string() ]
     return '-'.join(name_list) + '.txt'
 
